@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defisit Tracker Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <button onclick="showPage('dashboard')">Dashboard</button>
+        <button onclick="showPage('input-data')">Input Kalori</button>
+        <button onclick="showPage('bmr-calc')">BMR & TDEE</button>
+        <button onclick="showPage('profile')">Profil</button>
+    </nav>
+
+    <div class="container">
+        
+        <section id="dashboard" class="page active">
+            <h2>Dashboard Harian</h2>
+            <div class="summary-card">
+                <h3>Net Kalori: <span id="dashNet">0</span></h3>
+                <div class="summary-details">
+                    <span style="color: #d9534f;">Masuk: <b id="dashIn">0</b></span> | 
+                    <span style="color: #5cb85c;">Keluar: <b id="dashOut">0</b></span>
+                </div>
+            </div>
+            
+            <h4>Detail Aktivitas</h4>
+            <div style="overflow-x: auto;">
+                <table id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Kegiatan</th>
+                            <th>Tipe</th>
+                            <th>Kalori</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <hr style="margin: 30px 0;">
+            
+            <h4>Rekapitulasi Harian (History)</h4>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Total Masuk</th>
+                            <th>Total Keluar</th>
+                            <th>Net (Status)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rekapTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="input-data" class="page">
+            <h2>Catat Kalori</h2>
+            <div class="card">
+                <div class="input-group">
+                    <label>Tanggal (Kosongkan untuk hari ini):</label>
+                    <input type="date" id="inputDate">
+                    
+                    <label>Nama Makanan / Olahraga:</label>
+                    <input type="text" id="foodName" placeholder="Contoh: Nasi Padang / Lari Sore">
+                    
+                    <label>Tipe:</label>
+                    <select id="type">
+                        <option value="in">Kalori Masuk (Makan)</option>
+                        <option value="out">Kalori Keluar (Olahraga)</option>
+                    </select>
+
+                    <label>Jumlah Kalori (kcal):</label>
+                    <input type="number" id="calories" placeholder="0">
+                    
+                    <button class="btn-main" onclick="tambahItem()">Simpan ke Dashboard</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="bmr-calc" class="page">
+            <h2>Kalkulator BMR & TDEE</h2>
+            <div class="card">
+                <div class="input-group">
+                    <label>Gender:</label>
+                    <select id="gender">
+                        <option value="male">Laki-laki</option>
+                        <option value="female">Perempuan</option>
+                    </select>
+                    <input type="number" id="bmr-age" placeholder="Usia (Tahun)">
+                    <input type="number" id="bmr-weight" placeholder="Berat Badan (kg)">
+                    <input type="number" id="bmr-height" placeholder="Tinggi Badan (cm)">
+                    
+                    <label>Level Aktivitas:</label>
+                    <select id="activity">
+                        <option value="1.2">Sedentary (Kerja Kantoran)</option>
+                        <option value="1.375">Lightly Active</option>
+                        <option value="1.55">Moderately Active</option>
+                        <option value="1.725">Very Active</option>
+                    </select>
+                    
+                    <button class="btn-main" onclick="hitungBMR()">Hitung & Update Fisik</button>
+                </div>
+            </div>
+
+            <div id="bmr-result" class="result-box" style="display:none; margin-top:20px;"></div>
+
+            <h3>Riwayat Perubahan Fisik</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Berat</th>
+                            <th>BMR</th>
+                            <th>TDEE</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bmrTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="profile" class="page">
+            <h2>Profil Pengguna</h2>
+            <div class="card profile-card">
+                <label>Nama Kamu:</label>
+                <input type="text" id="profName" onchange="saveProfile()" placeholder="Masukkan Nama">
+                <hr>
+                <p>Usia: <b id="dispAge">-</b> Tahun</p>
+                <p>Berat Badan: <b id="dispWeight">-</b> kg</p>
+                <p>Tinggi Badan: <b id="dispHeight">-</b> cm</p>
+                <hr>
+                <h4 style="color: #007bff;">Estimasi Berat Ideal: <span id="idealWeight">-</span> kg</h4>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
