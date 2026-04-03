@@ -20,7 +20,7 @@
         <section id="dashboard" class="page active">
             <h2>Dashboard Harian</h2>
             <div class="summary-card">
-                <h3>Net Kalori: <span id="dashNet">0</span></h3>
+                <h3>Net Kalori: <span id="dashNet">0 kcal</span></h3>
                 <div class="summary-details">
                     <span style="color: #d9534f;">Masuk: <b id="dashIn">0</b></span> | 
                     <span style="color: #5cb85c;">Keluar: <b id="dashOut">0</b></span>
@@ -29,7 +29,7 @@
             
             <h4>Detail Aktivitas</h4>
             <div style="overflow-x: auto;">
-                <table id="historyTable">
+                <table>
                     <thead>
                         <tr>
                             <th>Tanggal</th>
@@ -51,8 +51,8 @@
                     <thead>
                         <tr>
                             <th>Tanggal</th>
-                            <th>Total Masuk</th>
-                            <th>Total Keluar</th>
+                            <th>Masuk</th>
+                            <th>Keluar</th>
                             <th>Net (Status)</th>
                         </tr>
                     </thead>
@@ -67,20 +67,16 @@
                 <div class="input-group">
                     <label>Tanggal (Kosongkan untuk hari ini):</label>
                     <input type="date" id="inputDate">
-                    
                     <label>Nama Makanan / Olahraga:</label>
                     <input type="text" id="foodName" placeholder="Contoh: Nasi Padang / Lari Sore">
-                    
                     <label>Tipe:</label>
                     <select id="type">
                         <option value="in">Kalori Masuk (Makan)</option>
                         <option value="out">Kalori Keluar (Olahraga)</option>
                     </select>
-
                     <label>Jumlah Kalori (kcal):</label>
                     <input type="number" id="calories" placeholder="0">
-                    
-                    <button class="btn-main" onclick="tambahItem()">Simpan ke Dashboard</button>
+                    <button class="btn-main" onclick="tambahItem()">Simpan Data</button>
                 </div>
             </div>
         </section>
@@ -97,7 +93,6 @@
                     <input type="number" id="bmr-age" placeholder="Usia (Tahun)">
                     <input type="number" id="bmr-weight" placeholder="Berat Badan (kg)">
                     <input type="number" id="bmr-height" placeholder="Tinggi Badan (cm)">
-                    
                     <label>Level Aktivitas:</label>
                     <select id="activity">
                         <option value="1.2">Sedentary (Kerja Kantoran)</option>
@@ -105,24 +100,15 @@
                         <option value="1.55">Moderately Active</option>
                         <option value="1.725">Very Active</option>
                     </select>
-                    
-                    <button class="btn-main" onclick="hitungBMR()">Hitung & Update Fisik</button>
+                    <button class="btn-main" onclick="hitungBMR()">Hitung & Update</button>
                 </div>
             </div>
-
             <div id="bmr-result" class="result-box" style="display:none; margin-top:20px;"></div>
-
             <h3>Riwayat Perubahan Fisik</h3>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Tanggal</th>
-                            <th>Berat</th>
-                            <th>BMR</th>
-                            <th>TDEE</th>
-                            <th>Aksi</th>
-                        </tr>
+                        <tr><th>Tanggal</th><th>Berat</th><th>BMR</th><th>TDEE</th><th>Aksi</th></tr>
                     </thead>
                     <tbody id="bmrTableBody"></tbody>
                 </table>
@@ -131,20 +117,34 @@
 
         <section id="profile" class="page">
             <h2>Profil Pengguna</h2>
-            <div class="card profile-card">
-                <label>Nama Kamu:</label>
-                <input type="text" id="profName" onchange="saveProfile()" placeholder="Masukkan Nama">
-                <hr>
-                <p>Usia: <b id="dispAge">-</b> Tahun</p>
-                <p>Berat Badan: <b id="dispWeight">-</b> kg</p>
-                <p>Tinggi Badan: <b id="dispHeight">-</b> cm</p>
-                <hr>
-                <h4 style="color: #007bff;">Estimasi Berat Ideal: <span id="idealWeight">-</span> kg</h4>
+            <div class="card profile-container">
+                <div class="profile-grid">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="profName" onchange="saveProfile()" placeholder="Masukkan Nama">
+
+                    <label>Usia</label>
+                    <input type="text" id="dispAge" readonly class="readonly-input">
+
+                    <label>Berat Badan</label>
+                    <input type="text" id="dispWeight" readonly class="readonly-input">
+
+                    <label>Tinggi Badan</label>
+                    <input type="text" id="dispHeight" readonly class="readonly-input">
+                    
+                    <label>BMR Dasar</label>
+                    <input type="text" id="dispBmr" readonly class="readonly-input">
+
+                    <label>TDEE (Maint.)</label>
+                    <input type="text" id="dispTdee" readonly class="readonly-input">
+                </div>
+
+                <div class="ideal-section">
+                    <h4>Estimasi Berat Badan Ideal</h4>
+                    <div class="ideal-box"><span id="idealWeight">-</span> <small>kg</small></div>
+                </div>
             </div>
         </section>
-
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>

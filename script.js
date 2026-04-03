@@ -1,37 +1,23 @@
-// --- 1. DATA STATE ---
 let logs = JSON.parse(localStorage.getItem('logs')) || [];
 let riwayatFisik = JSON.parse(localStorage.getItem('riwayatFisik')) || [];
-let profile = JSON.parse(localStorage.getItem('profile')) || { 
-    name: '', age: 0, weight: 0, height: 0, bmr: 0, tdee: 0 
-};
+let profile = JSON.parse(localStorage.getItem('profile')) || { name: '', age: 0, weight: 0, height: 0, bmr: 0, tdee: 0 };
 
 updateUI();
 
-// --- 2. NAVIGATION ---
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
 }
 
-// --- 3. INPUT LOGIC ---
 function tambahItem() {
     const inputDate = document.getElementById('inputDate').value;
     const nama = document.getElementById('foodName').value;
     const tipe = document.getElementById('type').value;
     const kalori = parseInt(document.getElementById('calories').value);
     
-    let tglFinal;
-    if (!inputDate) {
-        tglFinal = new Date().toLocaleDateString('id-ID');
-    } else {
-        const d = new Date(inputDate);
-        tglFinal = d.toLocaleDateString('id-ID');
-    }
+    let tglFinal = inputDate ? new Date(inputDate).toLocaleDateString('id-ID') : new Date().toLocaleDateString('id-ID');
 
-    if (!nama || isNaN(kalori)) {
-        alert("Harap isi Nama dan Kalori!");
-        return;
-    }
+    if (!nama || isNaN(kalori)) return alert("Isi data dengan lengkap!");
 
     logs.push({ tanggal: tglFinal, nama, tipe, kalori });
     saveData();
@@ -43,7 +29,6 @@ function tambahItem() {
     showPage('dashboard');
 }
 
-// --- 4. BMR & TDEE LOGIC ---
 function hitungBMR() {
     const gender = document.getElementById('gender').value;
     const age = parseInt(document.getElementById('bmr-age').value);
@@ -51,102 +36,74 @@ function hitungBMR() {
     const height = parseFloat(document.getElementById('bmr-height').value);
     const act = parseFloat(document.getElementById('activity').value);
 
-    if (!weight || !height || !age) {
-        alert("Lengkapi data fisik!");
-        return;
-    }
+    if (!weight || !height || !age) return alert("Lengkapi data fisik!");
 
     let bmr = (10 * weight) + (6.25 * height) - (5 * age);
     bmr = (gender === 'male') ? bmr + 5 : bmr - 161;
     const tdee = Math.round(bmr * act);
 
-    riwayatFisik.push({
-        tanggal: new Date().toLocaleDateString('id-ID'),
-        berat: weight,
-        bmr: Math.round(bmr),
-        tdee: tdee
-    });
-
-    profile.age = age; profile.weight = weight; profile.height = height;
-    profile.bmr = Math.round(bmr); profile.tdee = tdee;
+    riwayatFisik.push({ tanggal: new Date().toLocaleDateString('id-ID'), berat: weight, bmr: Math.round(bmr), tdee: tdee });
+    profile = { ...profile, age, weight, height, bmr: Math.round(bmr), tdee };
 
     saveData();
-    
     const resBox = document.getElementById('bmr-result');
     resBox.style.display = 'block';
     resBox.innerHTML = `<div style="background:#e3f2fd; padding:15px; border-radius:8px; border:1px solid #2196f3; color:#0d47a1;">
-        <strong>Kalkulasi Selesai!</strong><br>
-        BMR Dasar: ${Math.round(bmr)} kcal | TDEE (Maintenance): <b>${tdee} kcal</b>
-    </div>`;
-
+        <strong>BMR:</strong> ${Math.round(bmr)} kcal | <strong>TDEE:</strong> ${tdee} kcal</div>`;
     updateUI();
 }
 
-// --- 5. UI UPDATE (THE CORE) ---
 function updateUI() {
-    // A. TABEL DETAIL (ATAS)
+    // Dashboard Detail
     const tbodyLog = document.getElementById('tableBody');
-    let totalInAll = 0, totalOutAll = 0;
-
+    let totalIn = 0, totalOut = 0;
     if (tbodyLog) {
         tbodyLog.innerHTML = '';
         logs.forEach((item, index) => {
-            if (item.tipe === 'in') totalInAll += item.kalori;
-            else totalOutAll += item.kalori;
-
-            tbodyLog.innerHTML += `
-                <tr>
-                    <td><small>${item.tanggal || '-'}</small></td>
-                    <td>${item.nama}</td>
-                    <td>${item.tipe === 'in' ? 'Masuk' : 'Keluar'}</td>
-                    <td style="color:${item.tipe === 'in' ? '#d9534f':'#5cb85c'}; font-weight:bold;">
-                        ${item.tipe === 'in' ? '+':'-'}${item.kalori}
-                    </td>
-                    <td><button class="btn-hapus" onclick="hapusLog(${index})">x</button></td>
-                </tr>`;
+            if (item.tipe === 'in') totalIn += item.kalori; else totalOut += item.kalori;
+            tbodyLog.innerHTML += `<tr><td><small>${item.tanggal}</small></td><td>${item.nama}</td><td>${item.tipe === 'in' ? 'Masuk' : 'Keluar'}</td>
+                <td style="color:${item.tipe === 'in' ? '#d9534f':'#5cb85c'}; font-weight:bold;">${item.tipe === 'in' ? '+':'-'}${item.kalori}</td>
+                <td><button class="btn-hapus" onclick="hapusLog(${index})">x</button></td></tr>`;
         });
-
-        const netAll = totalInAll - totalOutAll;
-        let ketAll = (netAll < 0) ? "(Defisit)" : (netAll > 0) ? "(Surplus)" : "(Seimbang)";
-        let colorAll = (netAll < 0) ? "#5cb85c" : (netAll > 0) ? "#d9534f" : "#007bff";
-
-        document.getElementById('dashIn').innerText = totalInAll;
-        document.getElementById('dashOut').innerText = totalOutAll;
-        document.getElementById('dashNet').innerHTML = `${netAll} kcal <span style="color:${colorAll}; font-weight:normal; font-size:0.75em; margin-left:5px;">${ketAll}</span>`;
+        const net = totalIn - totalOut;
+        let ket = (net < 0) ? "(Defisit)" : (net > 0) ? "(Surplus)" : "(Seimbang)";
+        let color = (net < 0) ? "#5cb85c" : (net > 0) ? "#d9534f" : "#007bff";
+        document.getElementById('dashIn').innerText = totalIn;
+        document.getElementById('dashOut').innerText = totalOut;
+        document.getElementById('dashNet').innerHTML = `${net} kcal <span style="color:${color}; font-weight:normal; font-size:0.7em; margin-left:5px;">${ket}</span>`;
     }
 
-    // B. TABEL REKAPITULASI (BAWAH)
+    // Rekapitulasi Harian
     const rekapBody = document.getElementById('rekapTableBody');
     if (rekapBody) {
         rekapBody.innerHTML = '';
         const rekapData = {};
-
         logs.forEach(item => {
-            const tgl = item.tanggal;
-            if (!rekapData[tgl]) rekapData[tgl] = { masuk: 0, keluar: 0 };
-            if (item.tipe === 'in') rekapData[tgl].masuk += item.kalori;
-            else rekapData[tgl].keluar += item.kalori;
+            if (!rekapData[item.tanggal]) rekapData[item.tanggal] = { in: 0, out: 0 };
+            if (item.tipe === 'in') rekapData[item.tanggal].in += item.kalori; else rekapData[item.tanggal].out += item.kalori;
         });
-
         Object.keys(rekapData).reverse().forEach(tgl => {
-            const data = rekapData[tgl];
-            const netHarian = data.masuk - data.keluar;
-            let status = (netHarian < 0) ? "Defisit" : (netHarian > 0) ? "Surplus" : "Seimbang";
-            let warnaStatus = (netHarian < 0) ? "#5cb85c" : (netHarian > 0) ? "#d9534f" : "#007bff";
-
-            rekapBody.innerHTML += `
-                <tr>
-                    <td><b>${tgl}</b></td>
-                    <td>${data.masuk} kcal</td>
-                    <td>${data.keluar} kcal</td>
-                    <td style="color:${warnaStatus}; font-weight:bold;">
-                        ${netHarian} kcal <small style="font-weight:normal;">(${status})</small>
-                    </td>
-                </tr>`;
+            const d = rekapData[tgl];
+            const netH = d.in - d.out;
+            let st = (netH < 0) ? "Defisit" : (netH > 0) ? "Surplus" : "Seimbang";
+            let cl = (netH < 0) ? "#5cb85c" : (netH > 0) ? "#d9534f" : "#007bff";
+            rekapBody.innerHTML += `<tr><td><b>${tgl}</b></td><td>${d.in}</td><td>${d.out}</td><td style="color:${cl}; font-weight:bold;">${netH} kcal <small style="font-weight:normal;">(${st})</small></td></tr>`;
         });
     }
 
-    // C. BMR HISTORY & PROFILE
+    // Profil Page
+    document.getElementById('profName').value = profile.name || '';
+    document.getElementById('dispAge').value = profile.age ? profile.age + " Tahun" : "-";
+    document.getElementById('dispWeight').value = profile.weight ? profile.weight + " kg" : "-";
+    document.getElementById('dispHeight').value = profile.height ? profile.height + " cm" : "-";
+    document.getElementById('dispBmr').value = profile.bmr ? profile.bmr + " kcal" : "-";
+    document.getElementById('dispTdee').value = profile.tdee ? profile.tdee + " kcal" : "-";
+    if (profile.height > 0) {
+        const ideal = (profile.height - 100) - ((profile.height - 100) * 0.1);
+        document.getElementById('idealWeight').innerText = ideal.toFixed(1);
+    }
+
+    // BMR History
     const tbodyBmr = document.getElementById('bmrTableBody');
     if (tbodyBmr) {
         tbodyBmr.innerHTML = '';
@@ -154,33 +111,14 @@ function updateUI() {
             tbodyBmr.innerHTML += `<tr><td>${item.tanggal}</td><td>${item.berat} kg</td><td>${item.bmr}</td><td>${item.tdee}</td><td><button class="btn-hapus" onclick="hapusBMR(${index})">x</button></td></tr>`;
         });
     }
-
-    if(document.getElementById('profName')) document.getElementById('profName').value = profile.name || '';
-    document.getElementById('dispAge').innerText = profile.age || '-';
-    document.getElementById('dispWeight').innerText = profile.weight || '-';
-    document.getElementById('dispHeight').innerText = profile.height || '-';
-    if (profile.height > 0) {
-        const ideal = (profile.height - 100) - ((profile.height - 100) * 0.1);
-        document.getElementById('idealWeight').innerText = ideal.toFixed(1);
-    }
 }
 
-// --- 6. STORAGE & HELPERS ---
 function saveData() {
     localStorage.setItem('logs', JSON.stringify(logs));
     localStorage.setItem('riwayatFisik', JSON.stringify(riwayatFisik));
     localStorage.setItem('profile', JSON.stringify(profile));
 }
 
-function saveProfile() {
-    profile.name = document.getElementById('profName').value;
-    saveData();
-}
-
-function hapusLog(index) {
-    if(confirm("Hapus data?")) { logs.splice(index, 1); saveData(); updateUI(); }
-}
-
-function hapusBMR(index) {
-    if(confirm("Hapus riwayat?")) { riwayatFisik.splice(index, 1); saveData(); updateUI(); }
-}
+function saveProfile() { profile.name = document.getElementById('profName').value; saveData(); }
+function hapusLog(i) { if(confirm("Hapus?")) { logs.splice(i,1); saveData(); updateUI(); } }
+function hapusBMR(i) { if(confirm("Hapus?")) { riwayatFisik.splice(i,1); saveData(); updateUI(); } }

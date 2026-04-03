@@ -1,8 +1,7 @@
 body {
   font-family: "Segoe UI", sans-serif;
-  background: #f0f2f5;
+  background: #f4f7f6;
   margin: 0;
-  padding: 0;
 }
 .container {
   max-width: 600px;
@@ -10,7 +9,7 @@ body {
   padding: 20px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 .navbar {
   display: flex;
@@ -27,7 +26,6 @@ body {
   color: white;
   font-weight: bold;
   cursor: pointer;
-  transition: 0.3s;
 }
 .navbar button:hover {
   color: #5cb85c;
@@ -43,30 +41,27 @@ body {
   border-radius: 10px;
   padding: 20px;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   border: 1px solid #eee;
-}
-.summary-details {
-  margin-top: 10px;
-  font-size: 0.9em;
 }
 .card {
   background: #fff;
   padding: 20px;
   border-radius: 10px;
   border: 1px solid #eee;
+  margin-bottom: 20px;
 }
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 input,
 select {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  font-size: 1em;
+  font-size: 14px;
 }
 .btn-main {
   background: #007bff;
@@ -76,25 +71,19 @@ select {
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
-}
-.btn-main:hover {
-  background: #0056b3;
+  margin-top: 10px;
 }
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
-  font-size: 0.9em;
+  font-size: 0.85em;
 }
 th,
 td {
   border-bottom: 1px solid #eee;
   padding: 12px 8px;
   text-align: left;
-}
-th {
-  background: #fdfdfd;
-  color: #666;
 }
 .btn-hapus {
   background: #ff4d4d;
@@ -104,11 +93,38 @@ th {
   border-radius: 4px;
   cursor: pointer;
 }
-.profile-card p {
-  margin: 15px 0;
-  font-size: 1.1em;
+
+/* Profile Grid */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  align-items: center;
 }
-hr {
-  border: 0;
-  border-top: 1px solid #eee;
+.profile-grid label {
+  font-weight: bold;
+  color: #666;
+  font-size: 0.9em;
+}
+.readonly-input {
+  background-color: #f9f9f9 !important;
+  border: 1px dashed #ccc !important;
+  color: #007bff !important;
+  font-weight: bold;
+}
+.ideal-section {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px solid #eee;
+  text-align: center;
+}
+.ideal-box {
+  font-size: 28px;
+  font-weight: bold;
+  color: #28a745;
+  background: #eef9f1;
+  display: inline-block;
+  padding: 8px 25px;
+  border-radius: 50px;
+  margin: 10px 0;
 }
