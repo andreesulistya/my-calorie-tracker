@@ -46,15 +46,12 @@ function hitungBMR() {
     profile = { ...profile, age, weight, height, bmr: Math.round(bmr), tdee };
 
     saveData();
-    const resBox = document.getElementById('bmr-result');
-    resBox.style.display = 'block';
-    resBox.innerHTML = `<div style="background:#e3f2fd; padding:15px; border-radius:8px; border:1px solid #2196f3; color:#0d47a1;">
-        <strong>BMR:</strong> ${Math.round(bmr)} kcal | <strong>TDEE:</strong> ${tdee} kcal</div>`;
     updateUI();
+    showPage('profile');
 }
 
 function updateUI() {
-    // Dashboard Detail
+    // Dashboard Log
     const tbodyLog = document.getElementById('tableBody');
     let totalIn = 0, totalOut = 0;
     if (tbodyLog) {
@@ -73,7 +70,7 @@ function updateUI() {
         document.getElementById('dashNet').innerHTML = `${net} kcal <span style="color:${color}; font-weight:normal; font-size:0.7em; margin-left:5px;">${ket}</span>`;
     }
 
-    // Rekapitulasi Harian
+    // Rekapitulasi
     const rekapBody = document.getElementById('rekapTableBody');
     if (rekapBody) {
         rekapBody.innerHTML = '';
@@ -87,29 +84,21 @@ function updateUI() {
             const netH = d.in - d.out;
             let st = (netH < 0) ? "Defisit" : (netH > 0) ? "Surplus" : "Seimbang";
             let cl = (netH < 0) ? "#5cb85c" : (netH > 0) ? "#d9534f" : "#007bff";
-            rekapBody.innerHTML += `<tr><td><b>${tgl}</b></td><td>${d.in}</td><td>${d.out}</td><td style="color:${cl}; font-weight:bold;">${netH} kcal <small style="font-weight:normal;">(${st})</small></td></tr>`;
+            rekapBody.innerHTML += `<tr><td><b>${tgl}</b></td><td>${d.in}</td><td>${d.out}</td><td style="color:${cl}; font-weight:bold;">${netH} <small>(${st})</small></td></tr>`;
         });
     }
 
-    // Profil Page
+    // Profil Page Update
     document.getElementById('profName').value = profile.name || '';
     document.getElementById('dispAge').value = profile.age ? profile.age + " Tahun" : "-";
     document.getElementById('dispWeight').value = profile.weight ? profile.weight + " kg" : "-";
     document.getElementById('dispHeight').value = profile.height ? profile.height + " cm" : "-";
     document.getElementById('dispBmr').value = profile.bmr ? profile.bmr + " kcal" : "-";
     document.getElementById('dispTdee').value = profile.tdee ? profile.tdee + " kcal" : "-";
+    
     if (profile.height > 0) {
         const ideal = (profile.height - 100) - ((profile.height - 100) * 0.1);
         document.getElementById('idealWeight').innerText = ideal.toFixed(1);
-    }
-
-    // BMR History
-    const tbodyBmr = document.getElementById('bmrTableBody');
-    if (tbodyBmr) {
-        tbodyBmr.innerHTML = '';
-        riwayatFisik.forEach((item, index) => {
-            tbodyBmr.innerHTML += `<tr><td>${item.tanggal}</td><td>${item.berat} kg</td><td>${item.bmr}</td><td>${item.tdee}</td><td><button class="btn-hapus" onclick="hapusBMR(${index})">x</button></td></tr>`;
-        });
     }
 }
 
@@ -121,4 +110,3 @@ function saveData() {
 
 function saveProfile() { profile.name = document.getElementById('profName').value; saveData(); }
 function hapusLog(i) { if(confirm("Hapus?")) { logs.splice(i,1); saveData(); updateUI(); } }
-function hapusBMR(i) { if(confirm("Hapus?")) { riwayatFisik.splice(i,1); saveData(); updateUI(); } }
